@@ -17,8 +17,8 @@ type TaskStatus int
 const (
 	MapTask TaskType = iota
 	ReduceTask
-	WaitTask
-	ExitTask
+	WaitTask // 现在没任务，但以后可能有
+	ExitTask // 以后都不会有新的任务了
 )
 
 // 空闲、进行中、已完成任务状态
@@ -50,7 +50,6 @@ type Coordinator struct {
 	nReduce int
 
 	phase TaskType // 当前阶段：Map或Reduce
-
 }
 
 // Your code here -- RPC handlers for the worker to call.
@@ -100,7 +99,6 @@ func (c *Coordinator) RequestTask(args *RequestTaskArgs, reply *RequestTaskReply
 			reply.TaskType = ExitTask
 		}
 	}
-
 	return nil
 
 }
@@ -149,14 +147,6 @@ func (c *Coordinator) catchTimeouts() {
 	}
 }
 
-// an example RPC handler.
-//
-// the RPC argument and reply types are defined in rpc.go.
-func (c *Coordinator) Example(args *ExampleArgs, reply *ExampleReply) error {
-	reply.Y = args.X + 1
-	return nil
-}
-
 // start a thread that listens for RPCs from worker.go
 func (c *Coordinator) server() {
 	rpc.Register(c)
@@ -196,6 +186,7 @@ func (c *Coordinator) Done() bool {
 // main/mrcoordinator.go calls this function.
 // nReduce is the number of reduce tasks to use.
 func MakeCoordinator(files []string, nReduce int) *Coordinator {
+	// Your code here.
 	c := Coordinator{
 		nMap:        len(files),
 		nReduce:     nReduce,
@@ -203,8 +194,6 @@ func MakeCoordinator(files []string, nReduce int) *Coordinator {
 		mapTasks:    make([]TaskMetaData, len(files)),
 		reduceTasks: make([]TaskMetaData, nReduce),
 	}
-
-	// Your code here.
 
 	// 初始化 Map 任务
 	for i, file := range files {

@@ -11,11 +11,6 @@ import (
 	"strconv"
 )
 
-//
-// example to show how to declare the arguments
-// and reply for an RPC.
-//
-
 type ExampleArgs struct {
 	X int
 }
@@ -25,6 +20,7 @@ type ExampleReply struct {
 }
 
 // Add your RPC definitions here.
+
 // 1. 请求任务的参数（通常为空，Worker 只是问：能给我个活干吗？）
 type RequestTaskArgs struct {
 }

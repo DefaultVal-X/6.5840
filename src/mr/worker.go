@@ -60,14 +60,11 @@ func Worker(mapf func(string, string) []KeyValue,
 			reportDone(ReduceTask, reply.TaskID)
 		case WaitTask:
 			// 等待一段时间再请求任务
-			fmt.Println("Worker: Received WaitTask, sleeping...")
 			time.Sleep(time.Second)
 		case ExitTask:
-			// 退出工作
-			fmt.Println("Worker: Received ExitTask, exiting...")
 			return
 		default:
-			log.Fatalf("Worker: Unknown TaskType %v", reply.TaskType)
+			//log.Fatalf("Worker: Unknown TaskType %v", reply.TaskType)
 		}
 	}
 	// uncomment to send the Example RPC to the coordinator.
@@ -101,7 +98,7 @@ func doMap(mapf func(string, string) []KeyValue, reply RequestTaskReply) {
 	// 将每个桶写入对应的中间文件
 	for i := 0; i < reply.NReduce; i++ {
 		intermediateFileName := fmt.Sprintf("mr-%d-%d", reply.TaskID, i)
-		tempFile, err := os.CreateTemp("", "mr-tmp-*")
+		tempFile, err := os.CreateTemp("", fmt.Sprintf("mr-tmp-%d-*", reply.TaskID))
 		if err != nil {
 			log.Fatalf("Worker: cannot create temp file for %v", intermediateFileName)
 		}
